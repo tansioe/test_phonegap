@@ -19,14 +19,89 @@
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 		<script src="js/jquery-1.10.2.js" type="text/javascript"></script>
 		<script src="js/jquery-ui-1.10.4.min.js" type="text/javascript"></script>
+		<script src="js/cordova.js" type="text/javascript"></script>
 		<script>
 			$(document).ready(function() {
 				$('#btnTest').button();
 				
 				$('#btnTest').on("click", function() {
 					alert('test');
+					if (navigator.notification) {
+						navigator.notification.alert('Tadaaaaa', alertDismissed, 'Marto Isworo', 'Done');					
+					}
+					else
+					{
+						alert('Tadaaaa2');
+					}
+					
+					/*
+					navigator.camera.getPicture(
+						function(imageData) {
+							$('#myPicture').attr('src', "data:image/jpeg;base64," + imageData);
+						},
+						function() {
+							alert('Error Taking Picture', 'Error');
+						},
+						{
+							quality: 50,
+							destionationType: Camera.DestinationType.DATA_URL,
+							sourceType: Camera.PictureSourceType.CAMERA,
+							encodingType: Camera.EncodingType.JPEG
+						}
+					);*/
 				});
 			});
+			
+			document.addEventListener("deviceready", onDeviceReady, false);
+			
+			function alertDismissed() {
+				
+			}
+			
+			function onDeviceReady() {
+				
+				//document.addEventListener("backbutton", onBackButton, false);
+				document.addEventListener("pause", onPause, false);
+				document.addEventListener("resume", onResume, false);
+				$('#compassHeading').val('hello');
+
+				var compassOptions = {
+					frequency: 50
+				};
+				navigator.compass.watchHeading(onCompassSuccess, onCompassError, compassOptions);
+				navigator.accelerometer.watchAcceleration(onAccelerometerSuccess, onAccelerometerError, { frequency: 50 });
+				alert("Device is Ready");
+			}
+			
+			function onBackButton() {
+				alert("Back Button");
+			}
+			
+			function onPause() {
+				alert("Pause");
+			}
+			
+			function onResume() {
+				alert("Resume");
+			}
+			
+			function onCompassSuccess(heading){
+				$('#compassHeading').val(heading.magneticHeading);
+			}
+			
+			function onCompassError(compassError){
+				alert('Compass Error: ' + compassError.code);
+			}
+			
+			function onAccelerometerSuccess(acceleration) {
+				$('#accelerometerX').val('X:' + acceleration.x);
+				$('#accelerometerY').val('Y:' + acceleration.y);
+				$('#accelerometerZ').val('Z:' + acceleration.z);
+			}
+			
+			function onAccelerometerError() {
+				alert('Accelerometer Error');
+			}
 		</script>
 	</head>
 
@@ -46,6 +121,11 @@
 
 			<div>
 				<button id="btnTest">Press This</button>
+				<input id="compassHeading" type="text" /><br>
+				<input id="accelerometerX" type="text" /><br>
+				<input id="accelerometerY" type="text" /><br>
+				<input id="accelerometerZ" type="text" /><br>
+				<img id="myPicture">
 			</div>
 
 			<footer>
